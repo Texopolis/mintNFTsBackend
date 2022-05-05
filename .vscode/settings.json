@@ -1,0 +1,10 @@
+{
+    "editor.fontFamily": "'Fira Code', 'monospace', monospace",
+    "editor.cursorBlinking": "smooth",
+    "editor.cursorSmoothCaretAnimation": true,
+    "editor.formatOnType": true,
+    "diffEditor.wordWrap": "on",
+    "editor.fontSize": 16,
+    "editor.formatOnPaste": true,
+    "editor.formatOnSave": true
+}
