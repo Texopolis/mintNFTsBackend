@@ -112,35 +112,44 @@ contract MintNFTs is ERC721URIStorage {
     ];
 
 // Get fancy with it! Declare a bunch of colors.
-  string[] colors = ["red", "#08C2A8", "black", "yellow", "blue", "green"];
+  string[] colors = ['#FF6633', '#FFB399', '#FF33FF', '#FFFF99', '#00B3E6', 
+		  '#E6B333', '#3366E6', '#999966', '#99FF99', '#B34D4D',
+		  '#80B300', '#809900', '#E6B3B3', '#6680B3', '#66991A', 
+		  '#FF99E6', '#CCFF1A', '#FF1A66', '#E6331A', '#33FFCC',
+		  '#66994D', '#B366CC', '#4D8000', '#B33300', '#CC80CC', 
+		  '#66664D', '#991AFF', '#E666FF', '#4DB3FF', '#1AB399',
+		  '#E666B3', '#33991A', '#CC9999', '#B3B31A', '#00E680', 
+		  '#4D8066', '#809980', '#E6FF80', '#1AFF33', '#999933',
+		  '#FF3380', '#CCCC00', '#66E64D', '#4D80CC', '#9900B3', 
+		  '#E64D66', '#4DB380', '#FF4D4D', '#99E6E6', '#6666FF'];
 
   event NewEpicNFTMinted(address sender, uint256 tokenId);
 
   constructor() ERC721 ("SquareNFT", "SQUARE") {
-    console.log("This is my NFT contract. Woah!");
+    console.log("This is the MintNFTs contract");
   }
 
   function pickRandomFirstWord(uint256 tokenId) public view returns (string memory) {
-    uint256 rand = random(string(abi.encodePacked("FIRST_WORD", Strings.toString(tokenId))));
+    uint256 rand = random(string(abi.encodePacked(Strings.toString(block.timestamp), Strings.toString(tokenId))));
     rand = rand % firstWords.length;
     return firstWords[rand];
   }
 
   function pickRandomSecondWord(uint256 tokenId) public view returns (string memory) {
-    uint256 rand = random(string(abi.encodePacked("SECOND_WORD", Strings.toString(tokenId))));
+    uint256 rand = random(string(abi.encodePacked(Strings.toString(block.timestamp), Strings.toString(tokenId))));
     rand = rand % secondWords.length;
     return secondWords[rand];
   }
 
   function pickRandomThirdWord(uint256 tokenId) public view returns (string memory) {
-    uint256 rand = random(string(abi.encodePacked("THIRD_WORD", Strings.toString(tokenId))));
+    uint256 rand = random(string(abi.encodePacked(Strings.toString(block.timestamp), Strings.toString(tokenId))));
     rand = rand % thirdWords.length;
     return thirdWords[rand];
   }
 
   // Same old stuff, pick a random color.
   function pickRandomColor(uint256 tokenId) public view returns (string memory) {
-    uint256 rand = random(string(abi.encodePacked("COLOR", Strings.toString(tokenId))));
+    uint256 rand = random(string(abi.encodePacked(Strings.toString(block.timestamp), Strings.toString(tokenId))));
     rand = rand % colors.length;
     return colors[rand];
   }
@@ -148,6 +157,10 @@ contract MintNFTs is ERC721URIStorage {
   function random(string memory input) internal pure returns (uint256) {
     return uint256(keccak256(abi.encodePacked(input)));
   }
+
+  // function random2() private view returns (uint256) {
+  //   return uint256(keccak256(abi.encodePacked(block.difficulty, block.timestamp)));
+  // }
 
   function mintNFT() public {
     uint256 newItemId = _tokenIds.current();
