@@ -7,12 +7,16 @@ import "@openzeppelin/contracts/token/ERC721/extensions/ERC721URIStorage.sol";
 import "@openzeppelin/contracts/utils/Counters.sol";
 import "hardhat/console.sol";
 import "./datetime.sol";
+import "./svg.sol";
+import "./svgColors.sol";
 
 import {Base64} from "./libraries/Base64.sol";
 
-contract MintNFTs is ERC721URIStorage, DateTime {
+contract MintNFTs is ERC721URIStorage, DateTime, Svg, SvgColors {
     using Counters for Counters.Counter;
     Counters.Counter private _tokenIds;
+
+    // uint256 newItemId = _tokenIds.current();
 
     _DateTime timeObject = parseTimestamp(block.timestamp);
 
@@ -33,267 +37,78 @@ contract MintNFTs is ERC721URIStorage, DateTime {
                 currentSecond
             )
         );
-    string currentDate = string(abi.encodePacked(currentMonth,"/",currentDay,"/",currentYear));
-
-    string svgPartOne =
-        "<svg xmlns='http://www.w3.org/2000/svg' preserveAspectRatio='xMinYMin meet' viewBox='0 0 350 350'><style>.base { fill: white; font-family: serif; font-size: 24px; }</style><rect width='100%' height='100%' fill='";
-    string svgPartTwo =
-        "'/><text x='50%' y='50%' class='base' dominant-baseline='middle' text-anchor='middle'>";
-
-    string[] firstWords = [
-        "ragged"
-        // "dull",
-        // "resolute",
-        // "stiff",
-        // "intelligent",
-        // "temporary",
-        // "chemical",
-        // "stale",
-        // "organic",
-        // "typical",
-        // "puzzled",
-        // "valuable",
-        // "fancy",
-        // "wrathful",
-        // "plucky",
-        // "illustrious",
-        // "illustrious"
-    ];
-    string[] secondWords = [
-        "defeated"
-        // "defiant",
-        // "delicious",
-        // "delightful",
-        // "depressed",
-        // "determined",
-        // "eager",
-        // "early",
-        // "elated",
-        // "embarrassed",
-        // "empty",
-        // "encouraging",
-        // "energetic"
-        // "enthusiastic"
-        // "envious",
-        // "evil",
-        // "excited",
-        // "exuberant",
-        // "faint",
-        // "fair",
-        // "faithful",
-        // "fantastic",
-        // "fast",
-        // "fat",
-        // "few"
-        // "vast",
-        // "victorious",
-        // "vivacious",
-        // "voiceless",
-        // "wasteful",
-        // "watery",
-        // "weak",
-        // "weary",
-        // "wet",
-        // "frantic",
-        // "precious",
-        // "pretty",
-        // "prickly",
-        // "proud",
-        // "puny",
-        // "purple",
-        // "purring"
-    ];
-    string[] thirdWords = [
-        "oatmeal"
-        // "shelf",
-        // "stamp",
-        // "loaf",
-        // "train",
-        // "tin",
-        // "waves"
-        // "vest",
-        // "girl",
-        // "bait",
-        // "ball",
-        // "rate",
-        // "badge",
-        // "yard",
-        // "house",
-        // "zoo",
-        // "river",
-        // "magic",
-        // "cellar",
-        // "partner",
-        // "lake",
-        // "children",
-        // "alarm",
-        // "milk",
-        // "dress",
-        // "pollution",
-        // "chalk",
-        // "zipper"
-    ];
-
-    string[] colors = [
-        "#FF6633",
-        "#FFB399",
-        "#FF33FF",
-        "#FFFF99",
-        "#00B3E6",
-        "#E6B333",
-        "#3366E6",
-        "#999966",
-        "#99FF99",
-        "#B34D4D",
-        "#80B300",
-        "#809900",
-        "#E6B3B3",
-        "#6680B3",
-        "#66991A",
-        "#FF99E6",
-        "#CCFF1A",
-        "#FF1A66",
-        "#E6331A",
-        "#33FFCC",
-        "#66994D",
-        "#B366CC",
-        "#4D8000",
-        "#B33300",
-        "#CC80CC",
-        "#66664D",
-        "#991AFF",
-        "#E666FF",
-        "#4DB3FF",
-        "#1AB399",
-        "#E666B3",
-        "#33991A",
-        "#CC9999",
-        "#B3B31A",
-        "#00E680",
-        "#4D8066",
-        "#809980",
-        "#E6FF80",
-        "#1AFF33",
-        "#999933",
-        "#FF3380",
-        "#CCCC00",
-        "#66E64D",
-        "#4D80CC",
-        "#9900B3",
-        "#E64D66",
-        "#4DB380",
-        "#FF4D4D",
-        "#99E6E6",
-        "#6666FF"
-    ];
+    string currentDate =
+        string(
+            abi.encodePacked(currentMonth, "/", currentDay, "/", currentYear)
+        );
 
     event NewEpicNFTMinted(address sender, uint256 tokenId);
 
-    constructor() ERC721("SquareNFT", "SQUARE") {
+    constructor() ERC721("McFarland Springs Trout NFT", "TROUT") {
         console.log("This is the MintNFTs contract");
     }
 
-    function pickRandomFirstWord(uint256 tokenId)
-        public
-        view
-        returns (string memory)
-    {
-        uint256 rand = random(
+    function pickRandomBackgroundColor() public view returns (uint256) {
+        uint256 randColor = random(
             string(
                 abi.encodePacked(
-                    Strings.toString(block.timestamp),
-                    Strings.toString(tokenId)
+                    Strings.toString(block.timestamp)
+                    // Strings.toString(tokenId)
                 )
             )
         );
-        rand = rand % firstWords.length;
-        return firstWords[rand];
+        randColor = randColor % backgroundColorArr.length;
+        return randColor;
     }
 
-    function pickRandomSecondWord(uint256 tokenId)
-        public
-        view
-        returns (string memory)
-    {
-        uint256 rand = random(
-            string(
-                abi.encodePacked(
-                    Strings.toString(block.timestamp),
-                    Strings.toString(tokenId)
-                )
-            )
+    function pickRandomColorPalette() public view returns (uint256) {
+        uint256 randPalette = random(
+            string(abi.encodePacked(Strings.toString(block.timestamp)))
         );
-        rand = rand % secondWords.length;
-        return secondWords[rand];
-    }
-
-    function pickRandomThirdWord(uint256 tokenId)
-        public
-        view
-        returns (string memory)
-    {
-        uint256 rand = random(
-            string(
-                abi.encodePacked(
-                    Strings.toString(block.timestamp),
-                    Strings.toString(tokenId)
-                )
-            )
-        );
-        rand = rand % thirdWords.length;
-        return thirdWords[rand];
-    }
-
-    function pickRandomColor(uint256 tokenId)
-        public
-        view
-        returns (string memory)
-    {
-        uint256 rand = random(
-            string(
-                abi.encodePacked(
-                    Strings.toString(block.timestamp),
-                    Strings.toString(tokenId)
-                )
-            )
-        );
-        rand = rand % colors.length;
-        return colors[rand];
+        randPalette = randPalette % allColors.length;
+        return randPalette;
     }
 
     function random(string memory input) internal pure returns (uint256) {
         return uint256(keccak256(abi.encodePacked(input)));
     }
 
-    function mintNFT() public {
-        uint256 newItemId = _tokenIds.current();
+    function generateSVG() internal view returns (string memory) {
+        // uint256 newItemId = _tokenIds.current();
+        uint256 colorPalette = pickRandomColorPalette();
+        uint256 backgroundColor = pickRandomBackgroundColor();
 
-        string memory first = pickRandomFirstWord(newItemId);
-        string memory second = pickRandomSecondWord(newItemId);
-        string memory third = pickRandomThirdWord(newItemId);
-        string memory combinedWord = string(
-            abi.encodePacked(first, " ", second, " ", third)
-        );
-
-        string memory randomColor = pickRandomColor(newItemId);
-        string memory finalSvg = string(
+        string memory finalSVG = string(
             abi.encodePacked(
-                svgPartOne,
-                randomColor,
-                svgPartTwo,
-                currentTime,
-                currentDate,
-                "</text></svg>"
+                svg1,
+                backgroundColorArr[backgroundColor],
+                svg2,
+                allColors[colorPalette][0],
+                svg3,
+                allColors[colorPalette][1],
+                svg4,
+                allColors[colorPalette][2],
+                svg5,
+                allColors[colorPalette][3],
+                svg6,
+                "black",
+                svg7
             )
         );
+        return finalSVG;
+    }
+
+    function mintNFT() public {
+        uint256 newItemId = _tokenIds.current();
+        string memory finalSvg = generateSVG();
 
         string memory json = Base64.encode(
             bytes(
                 string(
                     abi.encodePacked(
                         '{"name": "',
-                        combinedWord,
-                        '", "description": "A highly acclaimed collection of squares.", "image": "data:image/svg+xml;base64,',
+                        "trout test title goes here",
+                        '", "description": "A highly acclaimed collection of trout stuff- description goes here.", "image": "data:image/svg+xml;base64,',
                         Base64.encode(bytes(finalSvg)),
                         '"}'
                     )
@@ -305,25 +120,26 @@ contract MintNFTs is ERC721URIStorage, DateTime {
             abi.encodePacked("data:application/json;base64,", json)
         );
 
-        console.log("\n--------------------");
-        console.log(finalTokenUri);
-        console.log("--------------------\n");
+        // console.log("\n--------------------");
+        // console.log("finalTokenUri");
+        // console.log("--------------------\n");
         console.log("svg= ", finalSvg);
-        console.log("_____________________\n");
-        console.log("timestamp: ", block.timestamp);
-        console.log("created at: ", currentTime);
-        console.log("on: ", currentDate);
+        // console.log("_____________________\n");
+        // console.log("timestamp: ", block.timestamp);
+        // console.log("created at: ", currentTime);
+        // console.log("on: ", currentDate);
+
 
         _safeMint(msg.sender, newItemId);
 
         _setTokenURI(newItemId, finalTokenUri);
 
         _tokenIds.increment();
-        console.log(
-            "An NFT w/ ID %s has been minted to %s",
-            newItemId,
-            msg.sender
-        );
+        // console.log(
+        //     "An NFT w/ ID %s has been minted to %s",
+        //     newItemId,
+        //     msg.sender
+        // );
         emit NewEpicNFTMinted(msg.sender, newItemId);
     }
 }
